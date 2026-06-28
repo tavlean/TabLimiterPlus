@@ -6,11 +6,18 @@ A cross-browser extension to limit the number of open tabs, globally, per-window
 
 - Limit total open tabs in the browser
 - Limit open tabs per window
+- Limit open tabs per domain, so individual sites can have their own cap
 - Show number of open tabs and remaining limit
 - Beautiful progress bars for showing usage and limits
 - Option to count or ignore pinned tabs
 - Optional badge showing remaining tabs
 - Option to open excess tabs in another window when the per-window limit is reached
+
+## Documentation
+
+- [How tab limits work](docs/how-limits-work.md) — what the limits do, and why the extension only blocks new tabs instead of closing open ones
+- [Changelog](docs/changelog.md)
+- [Privacy policy](docs/privacy.md)
 
 ## Installation
 

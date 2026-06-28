@@ -396,6 +396,17 @@ const scheduleTabLimitRecheck = (tabId, delay = 100) => {
 const handleExceedTabs = async (tab, options, place) => {
     const tabId = tab && tab.id;
 
+    // Safety invariant: this is the ONLY function that closes or moves a tab, and it
+    // may act solely on a tab that was just CREATED and is still awaiting its
+    // post-creation limit check. Existing tabs (reloads, discards, focus changes,
+    // pin toggles) must NEVER be closed — Tab Limiter only prevents NEW tabs beyond
+    // the limit, it never culls tabs that are already open. Consuming the pending
+    // entry here also dedupes the onUpdated and scheduled-recheck paths.
+    if (typeof tabId !== "number" || !pendingLimitCheckTabIds.has(tabId)) {
+        return;
+    }
+    pendingLimitCheckTabIds.delete(tabId);
+
     // CRITICAL: Always check total tab limit first
     const totalTabs = await getAllCountableTabs(options);
     const maxTotal = normalizeNumber(options.maxTotal, 50);
@@ -564,8 +575,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 return;
             }
 
-            pendingLimitCheckTabIds.delete(tabId);
-
+            // Note: the pending entry is consumed inside handleExceedTabs (the single
+            // chokepoint), so a tab that turns out not to exceed any limit stays
+            // eligible for the scheduled recheck as its URL settles.
             const exceededPlace = await detectExceededLimit(options, tab);
             if (!exceededPlace) {
                 return;

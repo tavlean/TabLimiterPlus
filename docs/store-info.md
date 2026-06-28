@@ -8,6 +8,7 @@
 
 -   Limit total open tabs in the browser
 -   Limit open tabs per window
+-   Limit open tabs per domain, so individual sites can have their own cap
 -   Show number of open tabs and remaining limit
 -   Beautiful progress bars for showing usage and limits
 -   Option to count or ignore pinned tabs
